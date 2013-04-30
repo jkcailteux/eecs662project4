@@ -6,6 +6,28 @@
 
 #lang plai
 
+; CFWAE/S type
+(define-type CFWAE/S
+  (num (n number?))
+  (id (name symbol?))
+  (add (lhs CFWAE/S?) (rhs CFWAE/S?))
+  (sub (lhs CFWAE/S?) (rhs CFWAE/S?))
+  (mul (lhs CFWAE/S?) (rhs CFWAE/S?))
+  (div (lhs CFWAE/S?) (rhs CFWAE/S?))
+  (with (bound-id symbol?) (named-expr CFWAE/S?) (bound-body CFWAE/S?))
+  (fun (fun-name symbol?) (body CFWAE/S?))
+  (app (fun-expr CFWAE/S?) (arg CFWAE/S?))
+  (if0 (c CFWAE/S?) (t CFWAE/S?) (e CFWAE/S?))
+  (seqq (first CFWAE/S?) (second CFWAE/S?))
+  (assignq (id-name symbol?) (value CFWAE/S?)))
+
+; CFWAE/S Value type
+(define-type CFWAE/S-Value
+  (numV (n number?))
+  (closureV (param symbol?)
+            (body CFWAE/S?)
+            (env Env?)))
+
 
 ; Environment type
 (define-type Env
@@ -39,35 +61,12 @@
               (store-lookup loc-index s)))))
 
 
-; CFWAE/S Value type
-(define-type CFWAE/S-Value
-  (numV (n number?))
-  (closureV (param symbol?)
-            (body CFWAE/S?)
-            (env Env?)))
-
-; CFWAE/S type
-(define-type CFWAE/S
-  (num (n number?))
-  (id (name symbol?))
-  (add (lhs CFWAE/S?) (rhs CFWAE/S?))
-  (sub (lhs CFWAE/S?) (rhs CFWAE/S?))
-  (mul (lhs CFWAE/S?) (rhs CFWAE/S?))
-  (div (lhs CFWAE/S?) (rhs CFWAE/S?))
-  (with (bound-id symbol?) (named-expr CFWAE/S?) (bound-body CFWAE/S?))
-  (fun (fun-name symbol?) (body CFWAE/S?))
-  (app (fun-expr CFWAE/S?) (arg CFWAE/S?))
-  (if0 (c CFWAE/S?) (t CFWAE/S?) (e CFWAE/S?))
-  (seqq (first CFWAE/S?) (second CFWAE/S?))
-  (assignq (id-name symbol?) (value CFWAE/S?)))
-
-
 ; Value Pairs
 (define-type Value*Store
   (v*s (value CFWAE/S-Value?) (store Store?)))
 
 
-; Parsing functoin
+; Parsing function
 (define parse-cfwaes
   (lambda (expr)
     (cond ((symbol? expr) (id expr))
@@ -92,7 +91,7 @@
           (else 'parse-cfwaes "Unexpected token"))))
 
 
-; Next location
+; Next-location
 (define (next-location sto)
   (type-case Store sto
     (mtSto () 1)
